@@ -1,6 +1,5 @@
 ﻿using Ecommerce.ProductAPI.Data.ValueObjects;
 using Ecommerce.ProductAPI.Repository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.ProductAPI.Controllers
@@ -31,7 +30,7 @@ namespace Ecommerce.ProductAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductVO productVo)
         {
-            if (productVo != null) return BadRequest();
+            if (productVo == null) return BadRequest();
             var product = await _productRepository.Create(productVo);
             return Ok(product);
         }
@@ -39,7 +38,7 @@ namespace Ecommerce.ProductAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] ProductVO productVo)
         {
-            if (productVo != null) return BadRequest();
+            if (productVo == null) return BadRequest();
             var product = await _productRepository.Update(productVo);
             return Ok(product);
         }
