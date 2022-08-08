@@ -37,7 +37,7 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(ProductVO productVo)
+        public async Task<IActionResult> Update([FromBody] ProductVO productVo)
         {
             if (productVo != null) return BadRequest();
             var product = await _productRepository.Update(productVo);
