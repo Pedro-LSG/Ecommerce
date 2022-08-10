@@ -1,5 +1,7 @@
 ﻿using Ecommerce.ProductAPI.Data.ValueObjects;
 using Ecommerce.ProductAPI.Repository;
+using Ecommerce.ProductAPI.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.ProductAPI.Controllers
@@ -15,12 +17,14 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductVO>>> FindAll()
         {
             return Ok(await _productRepository.FindAll()); 
         }
 
         [HttpGet("{identifier}")]
+        [Authorize]
         public async Task<IActionResult> FindByIdentifier(long identifier)
         {
             var product = await _productRepository.FindByIdentifier(identifier);
@@ -28,6 +32,7 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create([FromBody] ProductVO productVo)
         {
             if (productVo == null) return BadRequest();
@@ -36,6 +41,7 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Update([FromBody] ProductVO productVo)
         {
             if (productVo == null) return BadRequest();
@@ -44,6 +50,7 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpDelete("{identifier}")]
+        [Authorize(Roles = Role.Admin)]
         public async Task<ActionResult> Delete(long identifier)
         {
             var status = await _productRepository.Delete(identifier);

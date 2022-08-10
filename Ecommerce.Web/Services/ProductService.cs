@@ -1,6 +1,7 @@
 ﻿using Ecommerce.Web.Models;
 using Ecommerce.Web.Services.IServices;
 using Ecommerce.Web.Utils;
+using System.Net.Http.Headers;
 
 namespace Ecommerce.Web.Services
 {
@@ -13,28 +14,33 @@ namespace Ecommerce.Web.Services
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        public async Task<IEnumerable<ProductModel>> FindAll()
+        public async Task<IEnumerable<ProductModel>> FindAll(string token)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.GetAsync(BasePath);
             return await response.ReadContentAsync<List<ProductModel>>();
         }
-        public async Task<ProductModel> FindByIdentifier(long identifier)
+        public async Task<ProductModel> FindByIdentifier(long identifier, string token)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.GetAsync($"{BasePath}/{identifier}");
             return await response.ReadContentAsync<ProductModel>();
         }
-        public async Task<ProductModel> Create(ProductModel productModel)
+        public async Task<ProductModel> Create(ProductModel productModel, string token)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.PostAsJson(BasePath, productModel);
             return await response.ReadContentAsync<ProductModel>();
         }
-        public async Task<ProductModel> Update(ProductModel productModel)
+        public async Task<ProductModel> Update(ProductModel productModel, string token)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.PutAsJson(BasePath, productModel);
             return await response.ReadContentAsync<ProductModel>();
         }
-        public async Task<bool> Delete(long identifier)
+        public async Task<bool> Delete(long identifier, string token)
         {
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.DeleteAsync($"{BasePath}/{identifier}");
             return await response.ReadContentAsync<bool>();
         }
