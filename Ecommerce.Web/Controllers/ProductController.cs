@@ -19,11 +19,11 @@ namespace Ecommerce.Web.Controllers
         public async Task<IActionResult> ProductIndex()
         {
             var token = await HttpContext.GetTokenAsync("access_token");
-            var products = await _productService.FindAll(token);
+            var products = await _productService.FindAll(token ?? throw new ArgumentNullException(nameof(token)));
             return View(products);
         }
 
-        public async Task<IActionResult> ProductCreate()
+        public IActionResult ProductCreate()
         {
             return View();
         }

@@ -17,7 +17,6 @@ namespace Ecommerce.ProductAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<ActionResult<IEnumerable<ProductVO>>> FindAll()
         {
             return Ok(await _productRepository.FindAll()); 
