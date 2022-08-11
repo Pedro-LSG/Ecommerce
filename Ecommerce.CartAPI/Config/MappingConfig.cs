@@ -9,8 +9,10 @@ namespace Ecommerce.CartAPI.Config
         public static MapperConfiguration RegisterMaps()
         {
             var mappingConfig = new MapperConfiguration(config => {
-                config.CreateMap<CartVO, CartVO>();
-                config.CreateMap<CartVO, CartVO>();
+                config.CreateMap<CartVO, Cart>().ReverseMap();
+                config.CreateMap<CartHeaderVO, CartHeader>().ReverseMap();
+                config.CreateMap<CartDetailVO, CartDetail>().ReverseMap();
+                config.CreateMap<ProductVO, Product>().ReverseMap();
             });
 
             return mappingConfig;

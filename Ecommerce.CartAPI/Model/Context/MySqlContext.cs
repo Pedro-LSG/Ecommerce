@@ -8,7 +8,7 @@ namespace Ecommerce.CartAPI.Model.Context
         public MySqlContext(DbContextOptions<MySqlContext> options) 
         : base(options) {}
 
-        public DbSet<CartHeader> CartHeader { get; set; }
+        public DbSet<CartHeader> CartHeaders { get; set; }
         public DbSet<Product> Products{ get; set; }
         public DbSet<CartDetail> CartDetails { get; set; }
 

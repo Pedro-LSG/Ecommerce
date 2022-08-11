@@ -4,6 +4,8 @@ using Microsoft.OpenApi.Models;
 using AutoMapper;
 using Ecommerce.CartAPI.Model.Context;
 using Ecommerce.CartAPI.Config;
+using Ecommerce.CartAPI.Repository;
+using Ecommerce.CartAPI.Repository.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +48,7 @@ builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Registering repository
-//builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICartRepository, CartRepository>();
 
 builder.Services.AddSwaggerGen(c =>
 {
