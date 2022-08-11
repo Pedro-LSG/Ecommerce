@@ -1,4 +1,4 @@
-﻿namespace Ecommerce.CartAPI.Repository.Implementations
+﻿namespace Ecommerce.CartAPI.Repository
 {
     public class CartDetailRepository : ICartDetailRepository
     {

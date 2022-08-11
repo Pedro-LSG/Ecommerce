@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.CartAPI.Controllers
 {
-    [ApiController]
     [Route("api/v1/[controller]")]
+    [ApiController]
     public class CartController : ControllerBase
     {
 
@@ -16,7 +16,7 @@ namespace Ecommerce.CartAPI.Controllers
             _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
         }
 
-        [HttpGet("find-cart/{identifier}")]
+        [HttpGet("find-cart/{userIdentifier}")]
         [Authorize]
         public async Task<IActionResult> FindByIdentifier(string userIdentifier)
         {
@@ -25,7 +25,7 @@ namespace Ecommerce.CartAPI.Controllers
         }
 
 
-        [HttpPost("add-cart/{identifier}")]
+        [HttpPost("add-cart")]
         [Authorize]
         public async Task<IActionResult> AddCart(CartVO cartVo)
         {
@@ -34,7 +34,7 @@ namespace Ecommerce.CartAPI.Controllers
         }
 
 
-        [HttpPut("update-cart/{identifier}")]
+        [HttpPut("update-cart")]
         [Authorize]
         public async Task<IActionResult> UpdateCart(CartVO cartVo)
         {

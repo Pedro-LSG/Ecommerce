@@ -14,29 +14,29 @@ namespace Ecommerce.Web.Services
             _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
-        public async Task<IEnumerable<ProductModel>> FindAll(string token)
+        public async Task<IEnumerable<ProductViewModel>> FindAll(string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.GetAsync(BasePath);
-            return await response.ReadContentAsync<List<ProductModel>>();
+            return await response.ReadContentAsync<List<ProductViewModel>>();
         }
-        public async Task<ProductModel> FindByIdentifier(long identifier, string token)
+        public async Task<ProductViewModel> FindByIdentifier(long identifier, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.GetAsync($"{BasePath}/{identifier}");
-            return await response.ReadContentAsync<ProductModel>();
+            return await response.ReadContentAsync<ProductViewModel>();
         }
-        public async Task<ProductModel> Create(ProductModel productModel, string token)
+        public async Task<ProductViewModel> Create(ProductViewModel productModel, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.PostAsJson(BasePath, productModel);
-            return await response.ReadContentAsync<ProductModel>();
+            return await response.ReadContentAsync<ProductViewModel>();
         }
-        public async Task<ProductModel> Update(ProductModel productModel, string token)
+        public async Task<ProductViewModel> Update(ProductViewModel productModel, string token)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var response = await _client.PutAsJson(BasePath, productModel);
-            return await response.ReadContentAsync<ProductModel>();
+            return await response.ReadContentAsync<ProductViewModel>();
         }
         public async Task<bool> Delete(long identifier, string token)
         {

@@ -5,7 +5,6 @@ using AutoMapper;
 using Ecommerce.CartAPI.Model.Context;
 using Ecommerce.CartAPI.Config;
 using Ecommerce.CartAPI.Repository;
-using Ecommerce.CartAPI.Repository.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 

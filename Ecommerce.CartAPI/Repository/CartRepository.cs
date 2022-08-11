@@ -4,7 +4,7 @@ using Ecommerce.CartAPI.Model;
 using Ecommerce.CartAPI.Model.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ecommerce.CartAPI.Repository.Implementations
+namespace Ecommerce.CartAPI.Repository
 {
     public class CartRepository : ICartRepository
     {
@@ -28,7 +28,7 @@ namespace Ecommerce.CartAPI.Repository.Implementations
             {
                 var cartHeader = await _mySqlContext.CartHeaders.FirstOrDefaultAsync(c => c.UserId == userIdentifier);
 
-                if(cartHeader != null)
+                if (cartHeader != null)
                 {
                     _mySqlContext.CartDetails.RemoveRange(_mySqlContext.CartDetails.Where(c => c.CartHeaderId == cartHeader.Id));
                     _mySqlContext.CartHeaders.Remove(cartHeader);
@@ -100,7 +100,7 @@ namespace Ecommerce.CartAPI.Repository.Implementations
 
             var cartHeader = await _mySqlContext.CartHeaders.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == cart.CartHeader.UserId);
 
-            if(cartHeader == null)
+            if (cartHeader == null)
             {
                 _mySqlContext.CartHeaders.Add(cart.CartHeader);
                 await _mySqlContext.SaveChangesAsync();
@@ -111,11 +111,11 @@ namespace Ecommerce.CartAPI.Repository.Implementations
             }
             else
             {
-                var cartDetail = await _mySqlContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(p => p.ProductId == cartVo.CartDetails.FirstOrDefault().ProductId &&
+                var cartDetail = await _mySqlContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(p => p.ProductId == cart.CartDetails.FirstOrDefault().ProductId &&
                     p.CartHeaderId == cartHeader.Id);
                 if (cartHeader == null)
                 {
-                    cart.CartDetails.FirstOrDefault().CartHeaderId = cart.CartHeader.Id;
+                    cart.CartDetails.FirstOrDefault().CartHeaderId = cartHeader.Id;
                     cart.CartDetails.FirstOrDefault().Product = null;
                     _mySqlContext.CartDetails.Add(cart.CartDetails.FirstOrDefault());
                     await _mySqlContext.SaveChangesAsync();
