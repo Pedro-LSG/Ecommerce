@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.ProductAPI", "Eco
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.IdentityServer", "Ecommerce.IdentityServer\Ecommerce.IdentityServer.csproj", "{60970FA1-021C-4175-B2CF-67490BE3775A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.CartAPI", "Ecommerce.CartAPI\Ecommerce.CartAPI.csproj", "{81A6BD63-89B2-43AE-B306-D954DE3EF273}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ecommerce.CartAPI", "Ecommerce.CartAPI\Ecommerce.CartAPI.csproj", "{81A6BD63-89B2-43AE-B306-D954DE3EF273}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ecommerce.CouponAPI", "Ecommerce.CouponAPI\Ecommerce.CouponAPI.csproj", "{9EBFE75F-93D0-40A2-921E-F93DE7D29838}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{81A6BD63-89B2-43AE-B306-D954DE3EF273}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81A6BD63-89B2-43AE-B306-D954DE3EF273}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81A6BD63-89B2-43AE-B306-D954DE3EF273}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EBFE75F-93D0-40A2-921E-F93DE7D29838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EBFE75F-93D0-40A2-921E-F93DE7D29838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EBFE75F-93D0-40A2-921E-F93DE7D29838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EBFE75F-93D0-40A2-921E-F93DE7D29838}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{3ECB5951-574E-49ED-B97D-83B8C2F28D97} = {D0716354-5FED-472D-8974-4CB6EA384B2A}
 		{60970FA1-021C-4175-B2CF-67490BE3775A} = {D0716354-5FED-472D-8974-4CB6EA384B2A}
 		{81A6BD63-89B2-43AE-B306-D954DE3EF273} = {D0716354-5FED-472D-8974-4CB6EA384B2A}
+		{9EBFE75F-93D0-40A2-921E-F93DE7D29838} = {D0716354-5FED-472D-8974-4CB6EA384B2A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4E21A67C-9365-4035-A829-3597EC1D7794}
