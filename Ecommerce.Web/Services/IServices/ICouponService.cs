@@ -4,6 +4,6 @@ namespace Ecommerce.Web.Services.IServices
 {
     public interface ICouponService
     {
-        Task<CouponViewModel> GetCouponByCouponCode(string couponCode);
+        Task<CouponViewModel> GetCoupon(string code, string token);
     }
 }

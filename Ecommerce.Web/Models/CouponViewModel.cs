@@ -7,4 +7,3 @@
         public decimal DiscountAmount { get; set; }
     }
 }
-}

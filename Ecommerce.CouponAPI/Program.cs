@@ -31,7 +31,7 @@ builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommrece.CartAPI", Version = "1.0" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommrece.CouponAPI", Version = "1.0" });
     c.EnableAnnotations();
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
