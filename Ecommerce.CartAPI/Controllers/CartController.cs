@@ -5,49 +5,48 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce.CartAPI.Controllers
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
+    [Route("api/v1/[controller]")]
     public class CartController : ControllerBase
     {
+        private ICartRepository _repository;
 
-        private ICartRepository _cartRepository;
-        public CartController(ICartRepository cartRepository)
+        public CartController(ICartRepository repository)
         {
-            _cartRepository = cartRepository ?? throw new ArgumentNullException(nameof(cartRepository));
+            _repository = repository ?? throw new
+                ArgumentNullException(nameof(repository));
         }
 
-        [HttpGet("find-cart/{userIdentifier}")]
-        [Authorize]
-        public async Task<IActionResult> FindByIdentifier(string userIdentifier)
+        [HttpGet("find-cart/{id}")]
+        public async Task<ActionResult<CartVO>> FindById(string id)
         {
-            var cart = await _cartRepository.FindCartByUserIdentifier(userIdentifier);
-            return cart != null ? Ok(cart) : BadRequest();
+            var cart = await _repository.FindCartByUserId(id);
+            if (cart == null) return NotFound();
+            return Ok(cart);
         }
-
 
         [HttpPost("add-cart")]
-        [Authorize]
-        public async Task<IActionResult> AddCart(CartVO cartVo)
+        public async Task<ActionResult<CartVO>> AddCart(CartVO vo)
         {
-            var cart = await _cartRepository.SaveOrUpdateCart(cartVo);
-            return cart != null ? Ok(cart) : BadRequest();
+            var cart = await _repository.SaveOrUpdateCart(vo);
+            if (cart == null) return NotFound();
+            return Ok(cart);
         }
-
 
         [HttpPut("update-cart")]
-        [Authorize]
-        public async Task<IActionResult> UpdateCart(CartVO cartVo)
+        public async Task<ActionResult<CartVO>> UpdateCart(CartVO vo)
         {
-            var cart = await _cartRepository.SaveOrUpdateCart(cartVo);
-            return cart != null ? Ok(cart) : BadRequest();
+            var cart = await _repository.SaveOrUpdateCart(vo);
+            if (cart == null) return NotFound();
+            return Ok(cart);
         }
 
-        [HttpDelete("remove-cart/{identifier}")]
-        [Authorize]
-        public async Task<IActionResult> RemoveCart(int identifier)
+        [HttpDelete("remove-cart/{id}")]
+        public async Task<ActionResult<CartVO>> RemoveCart(int id)
         {
-            var cart = await _cartRepository.RemoveFromCart(identifier);
-            return cart ? Ok(cart) : BadRequest();
+            var status = await _repository.RemoveFromCart(id);
+            if (!status) return BadRequest();
+            return Ok(status);
         }
     }
 }

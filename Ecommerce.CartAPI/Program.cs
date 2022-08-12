@@ -49,6 +49,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 //Registering repository
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Ecommrece.CartAPI", Version = "1.0" });

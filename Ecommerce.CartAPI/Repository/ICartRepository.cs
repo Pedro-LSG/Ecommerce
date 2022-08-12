@@ -4,12 +4,11 @@ namespace Ecommerce.CartAPI.Repository
 {
     public interface ICartRepository
     {
-        Task<CartVO> FindCartByUserIdentifier(string id);
-        Task<CartVO> SaveOrUpdateCart(CartVO cartVo);
-        Task<bool> RemoveFromCart(long cartDetailId);
-        Task<bool> ApplyCoupon(string userIdentifier, string couponCode);
-        Task<bool> RemoveCoupon(string userIdentifier);
-        Task<bool> ClearCart(string userIdentifier);
-
+        Task<CartVO> FindCartByUserId(string userId);
+        Task<CartVO> SaveOrUpdateCart(CartVO cart);
+        Task<bool> RemoveFromCart(long cartDetailsId);
+        Task<bool> ApplyCoupon(string userId, string couponCode);
+        Task<bool> RemoveCoupon(string userId);
+        Task<bool> ClearCart(string userId);
     }
 }

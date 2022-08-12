@@ -24,7 +24,7 @@ namespace Ecommerce.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var products = await _productService.FindAll("");
+            var products = await _productService.FindAllProducts("");
             return View(products);
         }
 
@@ -32,7 +32,7 @@ namespace Ecommerce.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var token = await HttpContext.GetTokenAsync("access_token");
-            var model = await _productService.FindByIdentifier(id, token);
+            var model = await _productService.FindProductById(id, token);
             return View(model);
         }
 
@@ -55,7 +55,7 @@ namespace Ecommerce.Web.Controllers
             {
                 Count = model.Count,
                 ProductId = model.Id,
-                Product = await _productService.FindByIdentifier(model.Id, token)
+                Product = await _productService.FindProductById(model.Id, token)
             };
 
             List<CartDetailViewModel> cartDetails = new List<CartDetailViewModel>();

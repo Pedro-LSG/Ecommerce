@@ -8,54 +8,50 @@ namespace Ecommerce.CartAPI.Repository
 {
     public class CartRepository : ICartRepository
     {
-        private readonly MySqlContext _mySqlContext;
+        private readonly MySqlContext _context;
         private IMapper _mapper;
 
-        public CartRepository(MySqlContext mySqlContext, IMapper mapper)
+        public CartRepository(MySqlContext context, IMapper mapper)
         {
-            _mySqlContext = mySqlContext;
+            _context = context;
             _mapper = mapper;
         }
 
-        public async Task<bool> ApplyCoupon(string userIdentifier, string couponCode)
+        public async Task<bool> ApplyCoupon(string userId, string couponCode)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> ClearCart(string userIdentifier)
+        public async Task<bool> ClearCart(string userId)
         {
-            try
+            var cartHeader = await _context.CartHeaders
+                        .FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cartHeader != null)
             {
-                var cartHeader = await _mySqlContext.CartHeaders.FirstOrDefaultAsync(c => c.UserId == userIdentifier);
-
-                if (cartHeader != null)
-                {
-                    _mySqlContext.CartDetails.RemoveRange(_mySqlContext.CartDetails.Where(c => c.CartHeaderId == cartHeader.Id));
-                    _mySqlContext.CartHeaders.Remove(cartHeader);
-                    await _mySqlContext.SaveChangesAsync();
-                    return true;
-                }
-                return false;
+                _context.CartDetails
+                    .RemoveRange(
+                    _context.CartDetails.Where(c => c.CartHeaderId == cartHeader.Id));
+                _context.CartHeaders.Remove(cartHeader);
+                await _context.SaveChangesAsync();
+                return true;
             }
-            catch
-            {
-                return false;
-            }
+            return false;
         }
 
-        public async Task<CartVO> FindCartByUserIdentifier(string id)
+        public async Task<CartVO> FindCartByUserId(string userId)
         {
-            Cart cart = new Cart()
+            Cart cart = new()
             {
-                CartHeader = await _mySqlContext.CartHeaders.FirstOrDefaultAsync(c => c.UserId == id)
+                CartHeader = await _context.CartHeaders
+                    .FirstOrDefaultAsync(c => c.UserId == userId) ?? new CartHeader(),
             };
-
-            cart.CartDetails = _mySqlContext.CartDetails.Where(c => c.CartHeaderId == cart.CartHeader.Id).Include(c => c.Product);
-
+            cart.CartDetails = _context.CartDetails
+                .Where(c => c.CartHeaderId == cart.CartHeader.Id)
+                    .Include(c => c.Product);
             return _mapper.Map<CartVO>(cart);
         }
 
-        public async Task<bool> RemoveCoupon(string userIdentifier)
+        public async Task<bool> RemoveCoupon(string userId)
         {
             throw new NotImplementedException();
         }
@@ -64,75 +60,85 @@ namespace Ecommerce.CartAPI.Repository
         {
             try
             {
-                CartDetail cartDetail = await _mySqlContext.CartDetails.FirstOrDefaultAsync(c => c.Id == cartDetailsId);
+                CartDetail cartDetail = await _context.CartDetails
+                    .FirstOrDefaultAsync(c => c.Id == cartDetailsId);
 
-                int total = _mySqlContext.CartDetails.Where(c => c.CartHeaderId == cartDetail.CartHeaderId).Count();
+                int total = _context.CartDetails
+                    .Where(c => c.CartHeaderId == cartDetail.CartHeaderId).Count();
 
-                _mySqlContext.CartDetails.Remove(cartDetail);
+                _context.CartDetails.Remove(cartDetail);
 
                 if (total == 1)
                 {
-                    var cartHeaderToRemove = await _mySqlContext.CartHeaders.FirstOrDefaultAsync(c => c.Id == cartDetail.CartHeaderId);
-                    _mySqlContext.CartHeaders.Remove(cartHeaderToRemove);
+                    var cartHeaderToRemove = await _context.CartHeaders
+                        .FirstOrDefaultAsync(c => c.Id == cartDetail.CartHeaderId);
+                    _context.CartHeaders.Remove(cartHeaderToRemove);
                 }
-                await _mySqlContext.SaveChangesAsync();
-
+                await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }
         }
 
-        public async Task<CartVO> SaveOrUpdateCart(CartVO cartVo)
+        public async Task<CartVO> SaveOrUpdateCart(CartVO vo)
         {
-            Cart cart = _mapper.Map<Cart>(cartVo);
-            if (cart == null) throw new ArgumentNullException(nameof(cart));
-
-            var product = await _mySqlContext.Products.FirstOrDefaultAsync(p => p.Id == cartVo.CartDetails.FirstOrDefault().ProductId);
+            Cart cart = _mapper.Map<Cart>(vo);
+            //Checks if the product is already saved in the database if it does not exist then save
+            var product = await _context.Products.FirstOrDefaultAsync(
+                p => p.Id == vo.CartDetails.FirstOrDefault().ProductId);
 
             if (product == null)
             {
-                _mySqlContext.Products.Add(cart.CartDetails.FirstOrDefault().Product);
-                await _mySqlContext.SaveChangesAsync();
+                _context.Products.Add(cart.CartDetails.FirstOrDefault().Product);
+                await _context.SaveChangesAsync();
             }
 
-            var cartHeader = await _mySqlContext.CartHeaders.AsNoTracking().FirstOrDefaultAsync(c => c.UserId == cart.CartHeader.UserId);
+            //Check if CartHeader is null
+
+            var cartHeader = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(
+                c => c.UserId == cart.CartHeader.UserId);
 
             if (cartHeader == null)
             {
-                _mySqlContext.CartHeaders.Add(cart.CartHeader);
-                await _mySqlContext.SaveChangesAsync();
+                //Create CartHeader and CartDetails
+                _context.CartHeaders.Add(cart.CartHeader);
+                await _context.SaveChangesAsync();
                 cart.CartDetails.FirstOrDefault().CartHeaderId = cart.CartHeader.Id;
                 cart.CartDetails.FirstOrDefault().Product = null;
-                _mySqlContext.CartDetails.Add(cart.CartDetails.FirstOrDefault());
-                await _mySqlContext.SaveChangesAsync();
+                _context.CartDetails.Add(cart.CartDetails.FirstOrDefault());
+                await _context.SaveChangesAsync();
             }
             else
             {
-                var cartDetail = await _mySqlContext.CartDetails.AsNoTracking().FirstOrDefaultAsync(p => p.ProductId == cart.CartDetails.FirstOrDefault().ProductId &&
+                //If CartHeader is not null
+                //Check if CartDetails has same product
+                var cartDetail = await _context.CartDetails.AsNoTracking().FirstOrDefaultAsync(
+                    p => p.ProductId == cart.CartDetails.FirstOrDefault().ProductId &&
                     p.CartHeaderId == cartHeader.Id);
-                if (cartHeader == null)
+
+                if (cartDetail == null)
                 {
+                    //Create CartDetails
                     cart.CartDetails.FirstOrDefault().CartHeaderId = cartHeader.Id;
                     cart.CartDetails.FirstOrDefault().Product = null;
-                    _mySqlContext.CartDetails.Add(cart.CartDetails.FirstOrDefault());
-                    await _mySqlContext.SaveChangesAsync();
+                    _context.CartDetails.Add(cart.CartDetails.FirstOrDefault());
+                    await _context.SaveChangesAsync();
                 }
                 else
                 {
+                    //Update product count and CartDetails
                     cart.CartDetails.FirstOrDefault().Product = null;
                     cart.CartDetails.FirstOrDefault().Count += cartDetail.Count;
                     cart.CartDetails.FirstOrDefault().Id = cartDetail.Id;
                     cart.CartDetails.FirstOrDefault().CartHeaderId = cartDetail.CartHeaderId;
-                    _mySqlContext.CartDetails.Update(cart.CartDetails.FirstOrDefault());
-                    await _mySqlContext.SaveChangesAsync();
+                    _context.CartDetails.Update(cart.CartDetails.FirstOrDefault());
+                    await _context.SaveChangesAsync();
                 }
             }
             return _mapper.Map<CartVO>(cart);
-
-
         }
     }
 }
