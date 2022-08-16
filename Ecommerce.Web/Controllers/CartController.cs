@@ -34,6 +34,29 @@ namespace Ecommerce.Web.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> Checkout(CartViewModel model)
+        {
+
+            var token = await HttpContext.GetTokenAsync("access_token");
+
+            if (model.CartDetails == null) model.CartDetails = new List<CartDetailViewModel>();
+
+            var response = await _cartService.Checkout(model.CartHeader, token);
+
+            if (response != null)
+            {
+                return RedirectToAction(nameof(Confirmation));
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Confirmation(CartViewModel model)
+        {
+            return View();
+        }
+
+        [HttpPost]
         [ActionName("ApplyCoupon")]
         public async Task<IActionResult> ApplyCoupon(CartViewModel model)
         {

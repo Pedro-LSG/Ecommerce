@@ -5,6 +5,7 @@ using AutoMapper;
 using Ecommerce.CartAPI.Model.Context;
 using Ecommerce.CartAPI.Config;
 using Ecommerce.CartAPI.Repository;
+using Ecommerce.CartAPI.RabbitMqSender;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Registering repository
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddSingleton<IRabbitMQMessageSender, RabbitMQMessageSender>();
 
 
 builder.Services.AddSwaggerGen(c =>
