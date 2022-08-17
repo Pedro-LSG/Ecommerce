@@ -10,6 +10,7 @@ namespace Ecommerce.CartAPI.Model.Context
         public DbSet<CartHeader> CartHeaders { get; set; }
         public DbSet<Product> Products{ get; set; }
         public DbSet<CartDetail> CartDetails { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
 
     }
 }

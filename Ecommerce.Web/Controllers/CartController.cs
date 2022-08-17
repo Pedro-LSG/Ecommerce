@@ -36,17 +36,19 @@ namespace Ecommerce.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Checkout(CartViewModel model)
         {
-
             var token = await HttpContext.GetTokenAsync("access_token");
 
             if (model.CartDetails == null) model.CartDetails = new List<CartDetailViewModel>();
 
             var response = await _cartService.Checkout(model.CartHeader, token);
 
-            if (response != null)
+            if (response != null && response.GetType() == typeof(string))
             {
-                return RedirectToAction(nameof(Confirmation));
+                TempData["Error"] = response;
+                return RedirectToAction(nameof(Checkout));
             }
+            else if (response != null)
+                return RedirectToAction(nameof(Confirmation));
             return View(model);
         }
 
