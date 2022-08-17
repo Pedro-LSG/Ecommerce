@@ -1,5 +1,6 @@
 ﻿using Ecommerce.OrderAPI.Messages;
 using Ecommerce.OrderAPI.Model;
+using Ecommerce.OrderAPI.RabbitMqSender;
 using Ecommerce.OrderAPI.Repository;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -13,10 +14,13 @@ namespace Ecommerce.OrderAPI.MessageConsumer
         private readonly OrderRepository _repository;
         private IConnection _connection;
         private IModel _channel;
+        private IRabbitMQMessageSender _rabbitMQMessageSender;
 
-        public RabbitMQCheckoutConsumer(OrderRepository repository)
+        public RabbitMQCheckoutConsumer(OrderRepository repository, IRabbitMQMessageSender rabbitMQMessageSender)
         {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _rabbitMQMessageSender = rabbitMQMessageSender ?? throw new ArgumentNullException(nameof(rabbitMQMessageSender));
+
             var factory = new ConnectionFactory()
             {
                 HostName = "host.docker.internal",
@@ -76,11 +80,38 @@ namespace Ecommerce.OrderAPI.MessageConsumer
                     Price = details.Product.Price,
                     Count = details.Count
                 };
+
+                if (order.CartTotalItems == null) order.CartTotalItems = 0;
+
                 order.CartTotalItems += details.Count;
                 order.OrderDetails.Add(detail);
             }
 
             await _repository.AddOrder(order);
+            ProcessPayment(order);
+        }
+
+        private void ProcessPayment(OrderHeader order)
+        {
+            PaymentoVO payment = new()
+            {
+                Name = string.Format($"{order.FirstName} {order.LastName}"),
+                CardNumber = order.CardNumber,
+                CVV = order.CVV,
+                ExpiryMonthYear = order.ExpiryMonthYear,
+                OrderId = order.Id,
+                PurchaseAmount = order.PurchaseAmount,
+                Email = order.Email
+            };
+
+            try
+            {
+                _rabbitMQMessageSender.SendMessage(payment, "orderpaymentprocessqueue");
+            }
+            catch
+            {
+                throw;
+            }
         }
     }
 }

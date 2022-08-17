@@ -1,5 +1,6 @@
 using Ecommerce.OrderAPI.MessageConsumer;
 using Ecommerce.OrderAPI.Model.Context;
+using Ecommerce.OrderAPI.RabbitMqSender;
 using Ecommerce.OrderAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -26,6 +27,7 @@ b.UseMySql(connection, new MySqlServerVersion(new Version(8, 0, 30)));
 builder.Services.AddSingleton(new OrderRepository(b.Options));
 
 builder.Services.AddHostedService<RabbitMQCheckoutConsumer>();
+builder.Services.AddSingleton<IRabbitMQMessageSender, RabbitMQMessageSender>();
 
 builder.Services.AddSwaggerGen(c =>
 {
